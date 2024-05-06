@@ -46,10 +46,6 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
 
         var mercadoPagoRequest = new MercadoPagoRequest()
         {
-            External_reference = new()
-            {
-                Payment_id = payment_id.ToString()
-            },
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = pedido.ValorTotal,
             Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracaoParceiro?.ClienteMercadoPago ?? ""}",

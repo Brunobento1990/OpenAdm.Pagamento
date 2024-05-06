@@ -10,7 +10,6 @@ public class MercadoPagoRequest
     public string Description { get; set; } = string.Empty;
     public string? Notification_url { get; set; }
     public string Payment_method_id { get; set; } = "pix";
-    public ExternalReference? External_reference { get;set; }
     public Payer Payer { get; set; } = new();
 
     public StringContent ToJson()
@@ -26,11 +25,6 @@ public class MercadoPagoRequest
                 Encoding.UTF8,
                 "application/json");
     }
-}
-
-public class ExternalReference
-{
-    public string? Payment_id { get; set; }
 }
 
 public class Payer
