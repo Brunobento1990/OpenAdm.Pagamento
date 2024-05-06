@@ -110,7 +110,7 @@ public class PointOfInteraction
 
 public class MercadoPagoResponse
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public DateTime Date_created { get; set; }
     public object? Date_approved { get; set; }
     public DateTime Date_last_updated { get; set; }

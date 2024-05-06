@@ -12,7 +12,7 @@ public sealed class PagamentoPedido : BaseEntity
         string? qrCodePix,
         string? qrCodePixBase64,
         string? linkPagamento,
-        int mercadoPagoId,
+        long mercadoPagoId,
         Guid pedidoId,
         bool pago)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
@@ -28,7 +28,7 @@ public sealed class PagamentoPedido : BaseEntity
     public string? QrCodePix { get; private set; }
     public string? QrCodePixBase64 { get; private set; }
     public string? LinkPagamento { get; private set; }
-    public int MercadoPagoId { get; private set; }
+    public long MercadoPagoId { get; private set; }
     public Guid PedidoId { get; private set; }
     public bool Pago { get; private set; }
 

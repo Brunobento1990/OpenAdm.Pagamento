@@ -31,10 +31,11 @@ public sealed class MercadoPagoHttpClient : IMercadoPagoHttpClient
             throw new Exception($"Não foi possível efetuar o pagamento! AccessToken: {accessToken}");
         }
         var content = await response.Content.ReadAsStringAsync();
+
         return JsonSerializer.Deserialize<MercadoPagoResponse>(content, new JsonSerializerOptions()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        }) ?? throw new Exception("Não foi possível desserializar o objeto response do mercado pago!");
+        }) ?? throw new Exception("Não foi possível desserealizar o objeto response do mercado pago!");
     }
 }
