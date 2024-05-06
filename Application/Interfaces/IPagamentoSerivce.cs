@@ -7,5 +7,5 @@ namespace Application.Interfaces;
 public interface IPagamentoSerivce
 {
     Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto);
-    Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook);
+    Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook, string cliente);
 }

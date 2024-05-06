@@ -10,6 +10,7 @@ namespace Application.Services;
 
 public sealed class PagamentoSerivce : IPagamentoSerivce
 {
+    private readonly IAtualizarPagamentoRepository _atualizarPagamentoRepository;
     private readonly IPagamenoFactory _pagamenoFactory;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IPagamentoPedidoRepository _pagamentoPedidoRepository;
@@ -17,25 +18,18 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
     public PagamentoSerivce(
         IPagamenoFactory pagamenoFactory,
         IPedidoRepository pedidoRepository,
-        IPagamentoPedidoRepository pagamentoPedidoRepository)
+        IPagamentoPedidoRepository pagamentoPedidoRepository,
+        IAtualizarPagamentoRepository atualizarPagamentoRepository)
     {
         _pagamenoFactory = pagamenoFactory;
         _pedidoRepository = pedidoRepository;
         _pagamentoPedidoRepository = pagamentoPedidoRepository;
+        _atualizarPagamentoRepository = atualizarPagamentoRepository;
     }
 
-    public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook)
+    public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook, string cliente)
     {
-        var pagamento = await _pagamentoPedidoRepository.GetByMercadoPagoIdAsync(int.Parse(mercadoPagoWebHook.Id ?? "0"));
-
-        if (pagamento == null || pagamento.Pago) return;
-
-        var pedido = await _pedidoRepository.GetByIdAsync(pagamento.PedidoId);
-
-        if (pedido == null) return;
-
-        pagamento.UpdatePagamento();
-        await _pagamentoPedidoRepository.UpdateAsync(pagamento);
+        await _atualizarPagamentoRepository.AtualizarAsync(long.Parse(mercadoPagoWebHook.Id ?? "0"), cliente);
     }
 
     public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto)

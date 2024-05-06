@@ -14,6 +14,7 @@ public static class RepositoriesDependencyInject
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IPagamentoPedidoRepository, PagamentoPedidoRepository>();
         services.AddHttpContextAccessor();
+        services.AddScoped<IAtualizarPagamentoRepository, AtualizarPagamentoRepository>();
         return services;
     }
 }
