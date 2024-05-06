@@ -19,6 +19,7 @@ public sealed class MercadoPagoHttpClient : IMercadoPagoHttpClient
     public async Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken)
     {
         var httpClient = _httpClientFactory.CreateClient("MercadoPago");
+
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         var response = await httpClient.PostAsync("payments", mercadoPagoRequest.ToJson());
