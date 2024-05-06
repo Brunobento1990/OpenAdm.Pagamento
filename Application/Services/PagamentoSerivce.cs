@@ -48,12 +48,12 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         {
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = pedido.ValorTotal,
+            External_reference = payment_id.ToString(),
             Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracaoParceiro?.ClienteMercadoPago ?? ""}",
             Payer = new()
             {
                 Email = pedido.Usuario.Email,
                 First_name = pedido.Usuario.Nome,
-                Phone = pedido.Usuario.Telefone,
                 Identification = new()
                 {
                     Type = string.IsNullOrWhiteSpace(pedido.Usuario.Cnpj) ? "CPF" : "CNPJ",
@@ -72,11 +72,13 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
             qrCodePix: resultPagamento.QrCodePix,
             qrCodePixBase64: resultPagamento.QrCodePixBase64,
             linkPagamento: resultPagamento.LinkPagamento,
-            mercadoPagoId: resultPagamento.MercadoPagoId,
+            mercadoPagoId: resultPagamento.MercadoPagoId ?? 0,
             pedidoId: pedido.Id,
             false);
 
         await _pagamentoPedidoRepository.AddAsync(pagamentoPedido);
+
+        resultPagamento.MercadoPagoId = null;
 
         return resultPagamento;
     }
