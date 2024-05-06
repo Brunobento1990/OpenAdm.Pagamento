@@ -37,11 +37,11 @@ public class PagamentoController : ControllerBaseApi
         Console.WriteLine($"cliente: {cliente ?? "Cliente não encontrado"}");
         var header = HttpContext.Request.Headers["X-Signature"].FirstOrDefault();
 
-        //if (string.IsNullOrWhiteSpace(header) || string.IsNullOrWhiteSpace(cliente))
-        //{
-        //    Console.WriteLine("Falhou web hook!");
-        //    return Ok();
-        //}
+        if (string.IsNullOrWhiteSpace(header) || string.IsNullOrWhiteSpace(cliente))
+        {
+            Console.WriteLine("Falhou web hook!");
+            return Ok();
+        }
 
         Console.WriteLine($"X-Signature : {header}");
 
