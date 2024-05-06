@@ -32,8 +32,9 @@ public class PagamentoController : ControllerBaseApi
     }
 
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar(MercadoPagoWebHook? body)
+    public async Task<IActionResult> Notificar([FromBody]MercadoPagoWebHook? body, [FromQuery]string? cliente)
     {
+        Console.WriteLine($"cliente: {cliente ?? "Cliente não encontrado"}");
         var header = HttpContext.Request.Headers["X-Signature"].FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(header))
