@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Pkg.Cryptography;
+using Domain.Pkg.Entities;
 using Domain.Pkg.Exceptions;
 using Infrastructure.Context;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +24,14 @@ public sealed class ConfiguracaoParceiroRepository
            .Request?
            .Headers?
            .FirstOrDefault(x => x.Key == "Referer").Value.ToString() ?? throw new Exception();
+    }
+
+    public async Task<ConfiguracaoParceiro?> GetByDomainAsync(string domain)
+    {
+        return await _context
+            .ConfiguracoesParceiro
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Ativo && (x.DominioSiteAdm == domain || x.DominioSiteEcommerce == domain));
     }
 
     public async Task<string> GetConexaoDbByDominioAsync()

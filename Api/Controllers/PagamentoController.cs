@@ -22,7 +22,8 @@ public class PagamentoController : ControllerBaseApi
     {
         try
         {
-            var result = await _pagamentoSerivce.EfetuarPagamentoAsync(efetuarPagamentoDto);
+            var referer = HttpContext.Request.Headers["Referer"].FirstOrDefault();
+            var result = await _pagamentoSerivce.EfetuarPagamentoAsync(efetuarPagamentoDto, referer ?? "");
             return Ok(result);
         }
         catch (Exception ex)

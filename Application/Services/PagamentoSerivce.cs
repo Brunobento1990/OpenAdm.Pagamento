@@ -14,17 +14,20 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
     private readonly IPagamenoFactory _pagamenoFactory;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IPagamentoPedidoRepository _pagamentoPedidoRepository;
+    private readonly IConfiguracaoParceiroRepository _configuracaoParceiroRepository;
 
     public PagamentoSerivce(
         IPagamenoFactory pagamenoFactory,
         IPedidoRepository pedidoRepository,
         IPagamentoPedidoRepository pagamentoPedidoRepository,
-        IAtualizarPagamentoRepository atualizarPagamentoRepository)
+        IAtualizarPagamentoRepository atualizarPagamentoRepository,
+        IConfiguracaoParceiroRepository configuracaoParceiroRepository)
     {
         _pagamenoFactory = pagamenoFactory;
         _pedidoRepository = pedidoRepository;
         _pagamentoPedidoRepository = pagamentoPedidoRepository;
         _atualizarPagamentoRepository = atualizarPagamentoRepository;
+        _configuracaoParceiroRepository = configuracaoParceiroRepository;
     }
 
     public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook, string cliente)
@@ -32,21 +35,29 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoWebHook.Data?.Id ?? 0, cliente);
     }
 
-    public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto)
+    public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto, string referer)
     {
+        var configuracaoParceiro = await _configuracaoParceiroRepository.GetByDomainAsync(referer);
         var pedido = await _pedidoRepository.GetByIdAsync(efetuarPagamentoDto.PedidoId)
             ?? throw new Exception($"O pedido não foi localizado, ID: {efetuarPagamentoDto.PedidoId}");
 
         var factory = _pagamenoFactory.Get(efetuarPagamentoDto.TipoDePagamento);
+        var payment_id = Guid.NewGuid();
 
         var mercadoPagoRequest = new MercadoPagoRequest()
         {
+            External_reference = new()
+            {
+                Payment_id = payment_id.ToString()
+            },
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = pedido.ValorTotal,
+            Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracaoParceiro?.ClienteMercadoPago ?? ""}",
             Payer = new()
             {
                 Email = pedido.Usuario.Email,
                 First_name = pedido.Usuario.Nome,
+                Phone = pedido.Usuario.Telefone,
                 Identification = new()
                 {
                     Type = string.IsNullOrWhiteSpace(pedido.Usuario.Cnpj) ? "CPF" : "CNPJ",
@@ -58,7 +69,7 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         var resultPagamento = await factory.PagarAsync(mercadoPagoRequest);
 
         var pagamentoPedido = new PagamentoPedido(
-            id: Guid.NewGuid(),
+            id: payment_id,
             dataDeCriacao: DateTime.Now,
             dataDeAtualizacao: DateTime.Now,
             numero: 0,
