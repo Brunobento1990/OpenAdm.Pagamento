@@ -44,6 +44,8 @@ public class PagamentoController : ControllerBaseApi
             return Ok();
         }
 
+        Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
+
         Console.WriteLine($"X-Signature : {header}");
 
         if (body is MercadoPagoWebHook mercadoPagoRequest 
