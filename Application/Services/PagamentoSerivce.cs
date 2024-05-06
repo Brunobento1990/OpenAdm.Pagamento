@@ -1,4 +1,5 @@
-﻿using Application.Dtos.Pagamentos;
+﻿using Application.Dtos.MercadoPago;
+using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Factories;
@@ -21,6 +22,20 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         _pagamenoFactory = pagamenoFactory;
         _pedidoRepository = pedidoRepository;
         _pagamentoPedidoRepository = pagamentoPedidoRepository;
+    }
+
+    public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook)
+    {
+        var pagamento = await _pagamentoPedidoRepository.GetByMercadoPagoIdAsync(int.Parse(mercadoPagoWebHook.Id ?? "0"));
+
+        if (pagamento == null || pagamento.Pago) return;
+
+        var pedido = await _pedidoRepository.GetByIdAsync(pagamento.PedidoId);
+
+        if (pedido == null) return;
+
+        pagamento.UpdatePagamento();
+        await _pagamentoPedidoRepository.UpdateAsync(pagamento);
     }
 
     public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto)

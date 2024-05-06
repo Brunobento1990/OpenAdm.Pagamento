@@ -1,4 +1,5 @@
-﻿using Application.Dtos.Pagamentos;
+﻿using Application.Dtos.MercadoPago;
+using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -31,15 +32,22 @@ public class PagamentoController : ControllerBaseApi
     }
 
     [HttpPost("notificar")]
-    public IActionResult Notificar(object? body)
+    public async Task<IActionResult> Notificar(MercadoPagoWebHook? body)
     {
-        var header = HttpContext.Request.Headers;
+        var header = HttpContext.Request.Headers["X-Signature"].FirstOrDefault();
 
-        Console.WriteLine($"Header : {JsonSerializer.Serialize(header)}");
-
-        if(body is not null)
+        if (string.IsNullOrWhiteSpace(header))
         {
-            Console.WriteLine(JsonSerializer.Serialize(body));
+            Console.WriteLine("Falhou web hook!");
+            return Ok();
+        }
+
+        Console.WriteLine($"X-Signature : {header}");
+
+        if (body is not null)
+        {
+            await _pagamentoSerivce.AtualizarPagamento(body);
+            Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
         }
 
         return Ok();

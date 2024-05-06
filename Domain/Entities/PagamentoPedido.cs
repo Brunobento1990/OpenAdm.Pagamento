@@ -31,4 +31,9 @@ public sealed class PagamentoPedido : BaseEntity
     public int MercadoPagoId { get; private set; }
     public Guid PedidoId { get; private set; }
     public bool Pago { get; private set; }
+
+    public void UpdatePagamento()
+    {
+        if (!Pago) Pago = true;
+    }
 }
