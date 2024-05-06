@@ -29,7 +29,7 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
 
     public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook, string cliente)
     {
-        await _atualizarPagamentoRepository.AtualizarAsync(long.Parse(mercadoPagoWebHook.Id ?? "0"), cliente);
+        await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoWebHook.Data?.Id ?? 0, cliente);
     }
 
     public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto)
