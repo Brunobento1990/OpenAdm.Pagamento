@@ -33,7 +33,7 @@ public class PagamentoController : ControllerBaseApi
     }
 
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody]object? body, [FromQuery]string? cliente)
+    public async Task<IActionResult> Notificar([FromBody] MercadoPagoWebHook? body, [FromQuery] string? cliente)
     {
         Console.WriteLine($"cliente: {cliente ?? "Cliente não encontrado"}");
         var header = HttpContext.Request.Headers["X-Signature"].FirstOrDefault();
@@ -48,11 +48,9 @@ public class PagamentoController : ControllerBaseApi
 
         Console.WriteLine($"X-Signature : {header}");
 
-        if (body is MercadoPagoWebHook mercadoPagoRequest 
-            && mercadoPagoRequest.Data is not null
-            && mercadoPagoRequest.Action == "payment.updated")
+        if (body?.Data is not null && body?.Action == "payment.updated")
         {
-            await _pagamentoSerivce.AtualizarPagamento(mercadoPagoRequest, cliente);
+            await _pagamentoSerivce.AtualizarPagamento(body, cliente);
             Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
         }
 
