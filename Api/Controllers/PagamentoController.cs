@@ -48,7 +48,7 @@ public class PagamentoController : ControllerBaseApi
 
         Console.WriteLine($"X-Signature : {header}");
 
-        if (body?.Data is not null && body?.Action == "payment.updated")
+        if (body?.Data is not null && body?.Action == "payment.update")
         {
             await _pagamentoSerivce.AtualizarPagamento(body, cliente);
             Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
