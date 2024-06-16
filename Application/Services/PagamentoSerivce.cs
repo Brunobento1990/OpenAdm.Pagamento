@@ -49,7 +49,6 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = pedido.ValorTotal,
             External_reference = payment_id.ToString(),
-            Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracaoParceiro?.ClienteMercadoPago ?? ""}",
             Payer = new()
             {
                 Email = pedido.Usuario.Email,
