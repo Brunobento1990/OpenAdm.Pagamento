@@ -35,17 +35,18 @@ public class PagamentoController : ControllerBaseApi
 
     [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] MercadoPagoWebHook? body, [FromQuery] string cliente)
+    public async Task<IActionResult> Notificar([FromBody] object? body, [FromQuery] string cliente)
     {
-        if (body?.Data is not null && body?.Action == "payment.update")
-        {
-            await _pagamentoSerivce.AtualizarPagamento(body, cliente);
-            Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
-        }
-        else
-        {
-            Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
-        }
+        Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
+        //if (body?.Data is not null && body?.Action == "payment.update")
+        //{
+        //    await _pagamentoSerivce.AtualizarPagamento(body, cliente);
+        //    Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
+        //}
+        //else
+        //{
+        //    Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
+        //}
 
         return Ok();
     }
