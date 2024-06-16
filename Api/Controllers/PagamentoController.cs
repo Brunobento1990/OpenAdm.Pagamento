@@ -53,6 +53,10 @@ public class PagamentoController : ControllerBaseApi
             await _pagamentoSerivce.AtualizarPagamento(body, cliente);
             Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
         }
+        else
+        {
+            Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
+        }
 
         return Ok();
     }
