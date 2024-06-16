@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces;
+using Application.Models.NotificacaoMercadoPago;
 using Application.Services;
+using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IoC.Application;
@@ -10,6 +12,7 @@ public static class DependencyInjectServices
     {
         services.AddHttpContextAccessor();
         services.AddScoped<IPagamentoSerivce, PagamentoSerivce>();
+        services.AddScoped<INotificacaoMercadoPagoModel, NotificacaoMercadoPagoModel>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IConfiguracoesPagamentosMercadoPagoService, ConfiguracoesPagamentosMercadoPagoService>();
         return services;

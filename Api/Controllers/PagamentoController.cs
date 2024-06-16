@@ -1,4 +1,5 @@
-﻿using Application.Dtos.MercadoPago;
+﻿using Api.Attributes;
+using Application.Dtos.MercadoPago;
 using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -32,22 +33,10 @@ public class PagamentoController : ControllerBaseApi
         }
     }
 
+    [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] MercadoPagoWebHook? body, [FromQuery] string? cliente)
+    public async Task<IActionResult> Notificar([FromBody] MercadoPagoWebHook? body, [FromQuery] string cliente)
     {
-        Console.WriteLine($"cliente: {cliente ?? "Cliente não encontrado"}");
-        var header = HttpContext.Request.Headers["X-Signature"].FirstOrDefault();
-
-        if (string.IsNullOrWhiteSpace(header) || string.IsNullOrWhiteSpace(cliente))
-        {
-            Console.WriteLine("Falhou web hook!");
-            return Ok();
-        }
-
-        Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
-
-        Console.WriteLine($"X-Signature : {header}");
-
         if (body?.Data is not null && body?.Action == "payment.update")
         {
             await _pagamentoSerivce.AtualizarPagamento(body, cliente);
