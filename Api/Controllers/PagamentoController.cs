@@ -63,7 +63,21 @@ public class PagamentoController : ControllerBaseApi
         }
         else
         {
-            Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
+            var resorce = properties.FirstOrDefault(x => x.Name.ToLower() == "resource")?.GetValue(body);
+            Console.WriteLine($"resorce: ", resorce);
+            if (resorce != null)
+            {
+                var id = resorce.ToString()?.Replace("https://api.mercadolibre.com/collections/notifications/", "");
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    await _pagamentoSerivce.AtualizarPagamento(long.Parse(id));
+                    Console.WriteLine("Processamento concluido com sucesso!");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
+            }
         }
 
         return Ok();
