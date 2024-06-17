@@ -38,15 +38,13 @@ public class PagamentoController : ControllerBaseApi
     [HttpPost("notificar")]
     public async Task<IActionResult> Notificar([FromBody] Notification body)
     {
-        Console.WriteLine($"Resource: {body.Resource}");
-        Console.WriteLine($"Topic: {body.Topic}");
+        Console.WriteLine($"Data: {body?.Data.Id}");
 
-        if (body.Resource != null)
+        if (body?.Data != null)
         {
-            var id = body.Resource.Replace("https://api.mercadolibre.com/collections/notifications/", "");
-            if (!string.IsNullOrWhiteSpace(id))
+            if (!string.IsNullOrWhiteSpace(body?.Data.Id))
             {
-                await _pagamentoSerivce.AtualizarPagamento(long.Parse(id));
+                await _pagamentoSerivce.AtualizarPagamento(long.Parse(body?.Data.Id));
                 Console.WriteLine("Processamento concluído com sucesso!");
             }
             else
@@ -105,8 +103,19 @@ public class PagamentoController : ControllerBaseApi
     }
 }
 
+public class Data
+{
+    public string Id { get; set; } = string.Empty;
+}
+
 public class Notification
 {
-    public string Resource { get; set; } = string.Empty;
-    public string Topic { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty;
+    public string Api_version { get; set; } = string.Empty;
+    public Data Data { get; set; } = null!;
+    public DateTime Date_created { get; set; }
+    public long Id { get; set; }
+    public bool Live_mode { get; set; }
+    public string Type { get; set; } = string.Empty;
+    public string User_id { get; set; } = string.Empty;
 }
