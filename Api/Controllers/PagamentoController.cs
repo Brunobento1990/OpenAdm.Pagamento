@@ -1,5 +1,4 @@
 ﻿using Api.Attributes;
-using Application.Dtos.MercadoPago;
 using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +34,10 @@ public class PagamentoController : ControllerBaseApi
 
     [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] MercadoPagoWebHook body, [FromQuery] string cliente)
+    public async Task<IActionResult> Notificar([FromBody] dynamic body, [FromQuery] string cliente)
     {
-        if (body.Data is not null && body.Action == "payment.update")
+
+        if (body.data is not null && body.action == "payment.update")
         {
             await _pagamentoSerivce.AtualizarPagamento(body, cliente);
             Console.WriteLine($"Processamento concluido com sucesso: {JsonSerializer.Serialize(body)}");

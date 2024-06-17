@@ -1,5 +1,4 @@
-﻿using Application.Dtos.MercadoPago;
-using Application.Dtos.Pagamentos;
+﻿using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Factories;
@@ -30,9 +29,9 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         _configuracaoParceiroRepository = configuracaoParceiroRepository;
     }
 
-    public async Task AtualizarPagamento(MercadoPagoWebHook mercadoPagoWebHook, string cliente)
+    public async Task AtualizarPagamento(dynamic mercadoPagoWebHook, string cliente)
     {
-        await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoWebHook.Data?.Id ?? 0, cliente);
+        await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoWebHook.data?.id ?? 0, cliente);
     }
 
     public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto, string referer)
@@ -49,6 +48,7 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = pedido.ValorTotal,
             External_reference = payment_id.ToString(),
+            Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracaoParceiro?.ClienteMercadoPago ?? ""}",
             Payer = new()
             {
                 Email = pedido.Usuario.Email,

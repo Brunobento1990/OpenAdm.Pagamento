@@ -19,7 +19,6 @@ public class NotificacaoMercadoPagoAttribute : Attribute, IAsyncActionFilter
         var serviceProvider = context.HttpContext.RequestServices;
         var openAdmContext = serviceProvider.GetRequiredService<OpenAdmContext>();
         var notificacaoMercadoPagoModel = serviceProvider.GetRequiredService<INotificacaoMercadoPagoModel>();
-        Console.WriteLine($"Body do atributo: {JsonSerializer.Serialize(context.HttpContext.Request.Body)}");
         var request = context.HttpContext.Request;
         var uriBuilder = new UriBuilder(request.Scheme, request.Host.Host)
         {
