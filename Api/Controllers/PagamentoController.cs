@@ -40,7 +40,7 @@ public class PagamentoController : ControllerBaseApi
     {
         Console.WriteLine($"Data: {body?.Data.Id}");
 
-        if (body?.Data != null)
+        if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated"))
         {
             if (!string.IsNullOrWhiteSpace(body?.Data?.Id))
             {
