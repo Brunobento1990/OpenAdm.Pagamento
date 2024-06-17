@@ -44,7 +44,7 @@ public class PagamentoController : ControllerBaseApi
         var data = properties.FirstOrDefault(x => x.Name == "data")?.GetValue(body);
         var action = properties.FirstOrDefault(x => x.Name == "action")?.GetValue(body)?.ToString();
 
-        if (data is not null && action == "payment.update")
+        if (data is not null && (action == "payment.update" || action == "payment.updated"))
         {
             Console.WriteLine($"Data: {JsonSerializer.Serialize(data)}");
             var typeData = body.GetType();
