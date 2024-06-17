@@ -2,6 +2,7 @@
 using Application.Dtos.Pagamentos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Api.Controllers;
@@ -34,13 +35,30 @@ public class PagamentoController : ControllerBaseApi
 
     [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] dynamic body, [FromQuery] string cliente)
+    public async Task<IActionResult> Notificar([FromBody] object body, [FromQuery] string cliente)
     {
+        Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
+        Type type = body.GetType();
+        var properties = type.GetProperties();
 
-        if (body.data is not null && body.action == "payment.update")
+        var data = properties.FirstOrDefault(x => x.Name == "data")?.GetValue(body);
+        var action = properties.FirstOrDefault(x => x.Name == "action")?.GetValue(body)?.ToString();
+
+        if (data is not null && action == "payment.update")
         {
-            await _pagamentoSerivce.AtualizarPagamento(body, cliente);
-            Console.WriteLine($"Processamento concluido com sucesso: {JsonSerializer.Serialize(body)}");
+            Console.WriteLine($"Data: {JsonSerializer.Serialize(data)}");
+            var typeData = body.GetType();
+            var propertiesData = type.GetProperties();
+            var mercadoPagoId = propertiesData.FirstOrDefault(x => x.Name == "id")?.GetValue(data);
+            if (mercadoPagoId != null)
+            {
+                await _pagamentoSerivce.AtualizarPagamento((long)mercadoPagoId, cliente);
+                Console.WriteLine("Processamento concluido com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Não conseguiu dar o parse no data.id");
+            }
         }
         else
         {
