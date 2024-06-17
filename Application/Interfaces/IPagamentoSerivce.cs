@@ -7,5 +7,5 @@ namespace Application.Interfaces;
 public interface IPagamentoSerivce
 {
     Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto, string referer);
-    Task AtualizarPagamento(long mercadoPagoId, string cliente);
+    Task AtualizarPagamento(long mercadoPagoId);
 }

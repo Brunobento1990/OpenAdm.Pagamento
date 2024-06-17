@@ -29,9 +29,9 @@ public sealed class PagamentoSerivce : IPagamentoSerivce
         _configuracaoParceiroRepository = configuracaoParceiroRepository;
     }
 
-    public async Task AtualizarPagamento(long mercadoPagoId, string cliente)
+    public async Task AtualizarPagamento(long mercadoPagoId)
     {
-        await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoId, cliente);
+        await _atualizarPagamentoRepository.AtualizarAsync(mercadoPagoId);
     }
 
     public async Task<ResultPagamento> EfetuarPagamentoAsync(EfetuarPagamentoDto efetuarPagamentoDto, string referer)

@@ -41,9 +41,10 @@ public class PagamentoController : ControllerBaseApi
         Type type = body.GetType();
         var properties = type.GetProperties();
 
-        var data = properties.FirstOrDefault(x => x.Name == "data")?.GetValue(body);
-        var action = properties.FirstOrDefault(x => x.Name == "action")?.GetValue(body)?.ToString();
-
+        var data = properties.FirstOrDefault(x => x.Name.ToLower() == "data")?.GetValue(body);
+        var action = properties.FirstOrDefault(x => x.Name.ToLower() == "action")?.GetValue(body)?.ToString();
+        Console.WriteLine($"data: {JsonSerializer.Serialize(data)}");
+        Console.WriteLine($"action: {action}");
         if (data is not null && (action == "payment.update" || action == "payment.updated"))
         {
             Console.WriteLine($"Data: {JsonSerializer.Serialize(data)}");
@@ -52,7 +53,7 @@ public class PagamentoController : ControllerBaseApi
             var mercadoPagoId = propertiesData.FirstOrDefault(x => x.Name == "id")?.GetValue(data);
             if (mercadoPagoId != null)
             {
-                await _pagamentoSerivce.AtualizarPagamento((long)mercadoPagoId, cliente);
+                await _pagamentoSerivce.AtualizarPagamento((long)mercadoPagoId);
                 Console.WriteLine("Processamento concluido com sucesso!");
             }
             else

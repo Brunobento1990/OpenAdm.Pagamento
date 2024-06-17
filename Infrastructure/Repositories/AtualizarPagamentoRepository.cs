@@ -19,7 +19,7 @@ public sealed class AtualizarPagamentoRepository : IAtualizarPagamentoRepository
         _notificacaoMercadoPagoModel = notificacaoMercadoPagoModel;
     }
 
-    public async Task<bool> AtualizarAsync(long mercadoPagoId, string cliente)
+    public async Task<bool> AtualizarAsync(long mercadoPagoId)
     {
         var optionsBuilderParceiro = new DbContextOptionsBuilder<ContextMercadoPago>();
 
