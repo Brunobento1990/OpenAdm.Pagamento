@@ -35,7 +35,7 @@ public class PagamentoController : ControllerBaseApi
 
     [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] object body, [FromQuery] string cliente)
+    public async Task<IActionResult> Notificar([FromBody] object body)
     {
         Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
         Type type = body.GetType();
