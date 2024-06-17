@@ -42,9 +42,9 @@ public class PagamentoController : ControllerBaseApi
 
         if (body?.Data != null)
         {
-            if (!string.IsNullOrWhiteSpace(body?.Data.Id))
+            if (!string.IsNullOrWhiteSpace(body?.Data?.Id))
             {
-                await _pagamentoSerivce.AtualizarPagamento(long.Parse(body?.Data.Id));
+                await _pagamentoSerivce.AtualizarPagamento(long.Parse(body.Data.Id));
                 Console.WriteLine("Processamento concluído com sucesso!");
             }
             else
