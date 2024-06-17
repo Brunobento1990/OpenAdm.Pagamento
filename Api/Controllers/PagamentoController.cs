@@ -1,6 +1,7 @@
 ﻿using Api.Attributes;
 using Application.Dtos.Pagamentos;
 using Application.Interfaces;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Text.Json;
@@ -35,51 +36,77 @@ public class PagamentoController : ControllerBaseApi
 
     [NotificacaoMercadoPago]
     [HttpPost("notificar")]
-    public async Task<IActionResult> Notificar([FromBody] object body)
+    public async Task<IActionResult> Notificar([FromBody] Notification body)
     {
-        Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
-        Type type = body.GetType();
-        var properties = type.GetProperties();
+        Console.WriteLine($"Resource: {body.Resource}");
+        Console.WriteLine($"Topic: {body.Topic}");
 
-        var data = properties.FirstOrDefault(x => x.Name.ToLower() == "data")?.GetValue(body);
-        var action = properties.FirstOrDefault(x => x.Name.ToLower() == "action")?.GetValue(body)?.ToString();
-        Console.WriteLine($"data: {JsonSerializer.Serialize(data)}");
-        Console.WriteLine($"action: {action}");
-        if (data is not null && (action == "payment.update" || action == "payment.updated"))
+        if (body.Resource != null)
         {
-            Console.WriteLine($"Data: {JsonSerializer.Serialize(data)}");
-            var typeData = body.GetType();
-            var propertiesData = type.GetProperties();
-            var mercadoPagoId = propertiesData.FirstOrDefault(x => x.Name == "id")?.GetValue(data);
-            if (mercadoPagoId != null)
+            var id = body.Resource.Replace("https://api.mercadolibre.com/collections/notifications/", "");
+            if (!string.IsNullOrWhiteSpace(id))
             {
-                await _pagamentoSerivce.AtualizarPagamento((long)mercadoPagoId);
-                Console.WriteLine("Processamento concluido com sucesso!");
+                await _pagamentoSerivce.AtualizarPagamento(long.Parse(id));
+                Console.WriteLine("Processamento concluído com sucesso!");
             }
             else
             {
-                Console.WriteLine("Não conseguiu dar o parse no data.id");
+                Console.WriteLine("Não conseguiu dar o parse no resource ID");
             }
         }
         else
         {
-            var resorce = properties.FirstOrDefault(x => x.Name.ToLower() == "resource")?.GetValue(body);
-            Console.WriteLine($"resorce: ", resorce);
-            if (resorce != null)
-            {
-                var id = resorce.ToString()?.Replace("https://api.mercadolibre.com/collections/notifications/", "");
-                if (!string.IsNullOrWhiteSpace(id))
-                {
-                    await _pagamentoSerivce.AtualizarPagamento(long.Parse(id));
-                    Console.WriteLine("Processamento concluido com sucesso!");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
-            }
+            Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
         }
+        //Console.WriteLine($"Body: {JsonSerializer.Serialize(body)}");
+        //Type type = body.GetType();
+        //var properties = type.GetProperties();
+
+        //var data = properties.FirstOrDefault(x => x.Name.ToLower() == "data")?.GetValue(body);
+        //var action = properties.FirstOrDefault(x => x.Name.ToLower() == "action")?.GetValue(body)?.ToString();
+        //Console.WriteLine($"data: {JsonSerializer.Serialize(data)}");
+        //Console.WriteLine($"action: {action}");
+        //if (data is not null && (action == "payment.update" || action == "payment.updated"))
+        //{
+        //    Console.WriteLine($"Data: {JsonSerializer.Serialize(data)}");
+        //    var typeData = body.GetType();
+        //    var propertiesData = type.GetProperties();
+        //    var mercadoPagoId = propertiesData.FirstOrDefault(x => x.Name == "id")?.GetValue(data);
+        //    if (mercadoPagoId != null)
+        //    {
+        //        await _pagamentoSerivce.AtualizarPagamento((long)mercadoPagoId);
+        //        Console.WriteLine("Processamento concluido com sucesso!");
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Não conseguiu dar o parse no data.id");
+        //    }
+        //}
+        //else
+        //{
+        //    var resorce = properties.FirstOrDefault(x => x.Name.ToLower() == "resource")?.GetValue(body);
+        //    Console.WriteLine($"resorce: ", resorce);
+        //    if (resorce != null)
+        //    {
+        //        var id = resorce.ToString()?.Replace("https://api.mercadolibre.com/collections/notifications/", "");
+        //        if (!string.IsNullOrWhiteSpace(id))
+        //        {
+        //            await _pagamentoSerivce.AtualizarPagamento(long.Parse(id));
+        //            Console.WriteLine("Processamento concluido com sucesso!");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine($"Não achou o body: {JsonSerializer.Serialize(body)}");
+        //    }
+        //}
 
         return Ok();
     }
+}
+
+public class Notification
+{
+    public string Resource { get; set; } = string.Empty;
+    public string Topic { get; set; } = string.Empty;
 }
